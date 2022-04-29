@@ -1,4 +1,4 @@
-# from DataSetReader import DataSetReader
+from Dataset import DataSetReader
 from Modules.Bernoulli_Naives_Classifier import GaussianNB
 import numpy as np
 import pandas as pd
