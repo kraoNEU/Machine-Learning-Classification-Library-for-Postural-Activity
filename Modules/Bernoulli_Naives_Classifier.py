@@ -114,8 +114,8 @@ class MultiClassBernoulliClassification:
                     new_output_data.append(1)
                 else:
                     new_output_data.append(0)
-            this_model = BinaryLogisticRegression(learning_rate=0.0001, iteration_count=1000)
-            this_model.train_model(input_data, new_output_data)
+            this_model = GaussianNB()
+            this_model.fit(input_data, new_output_data)
             self.class_model_dict[each_class] = this_model
 
     def class_predictor(self, input_data_new):
