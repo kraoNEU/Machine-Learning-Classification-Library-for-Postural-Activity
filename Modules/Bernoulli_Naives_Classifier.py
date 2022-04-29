@@ -98,3 +98,41 @@ class GaussianNB:
             results.append(result)
 
         return np.array(results)
+
+
+class MultiClassBernoulliClassification:
+
+    def __init__(self):
+        self.class_model_dict = {}
+
+    def train_model(self, input_data, output_data):
+        target_class_list = list(set(output_data))
+        for each_class in target_class_list:
+            new_output_data = []
+            for each_output_sample in output_data:
+                if each_class == each_output_sample:
+                    new_output_data.append(1)
+                else:
+                    new_output_data.append(0)
+            this_model = BinaryLogisticRegression(learning_rate=0.0001, iteration_count=1000)
+            this_model.train_model(input_data, new_output_data)
+            self.class_model_dict[each_class] = this_model
+
+    def class_predictor(self, input_data_new):
+        all_classes = self.class_model_dict.keys()
+        predicted_class_list = []
+
+        for each_example in input_data_new:
+            probability_dict = {}
+            for each in all_classes:
+                model = self.class_model_dict[each]
+                n = tuple(model.predictor_trainer(input_data_new))
+                probability_dict[n] = each
+            predicted_class = probability_dict.get(max(probability_dict.keys()))
+            predicted_class_list.append(predicted_class)
+
+        return predicted_class_list
+
+    def accuracy(self, outputClass, predictedClass):
+        percent_accuracy: int = np.sum(outputClass == predictedClass) / len(outputClass) * 100
+        return percent_accuracy
