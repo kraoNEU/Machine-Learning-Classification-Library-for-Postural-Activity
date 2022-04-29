@@ -1,12 +1,11 @@
-# Importing Libraries
+# Import the libraries
 
 import pandas as pd
 import math
 import copy
 
 # Reading the data and printing total shape of dataset
-
-dataset = pd.read_csv("../Dataset/posturalDatset.csv")
+dataset = pd.read_csv('../Dataset/posturalDatset.csv')
 X = dataset.iloc[:, 1:].values
 Rows = dataset.shape[0]
 
@@ -14,9 +13,7 @@ Rows = dataset.shape[0]
 attribute = ['tag', 'x', 'y', 'z']
 
 
-# Let's Define a class
-# that refers an objects to value decisions and childs as fields for attribute
-
+# That refers an objects to value decisions and childs as fields for attribute
 class Node(object):
     def __init__(self):
         self.value = None
@@ -44,7 +41,6 @@ def findEntropy(data, rows):
     lying = 0
     ans = -1
     idx = len(data[0]) - 1
-
     entropy = 0
     total_count = 0
 
@@ -75,7 +71,8 @@ def findEntropy(data, rows):
 
     # Total_count based upon the activities
     total_count += (
-            walking + falling + l_down + s_down + sitting + standing_up_from_lying + sitting_on_the_ground + standing_up_from_sitting + standing_up_from_sitting_on_ground)
+                walking + falling + l_down + s_down + sitting + standing_up_from_lying + sitting_on_the_ground
+                + standing_up_from_sitting + standing_up_from_sitting_on_ground)
 
     if total_count == 0:
         return 0, 0
@@ -158,10 +155,6 @@ def findMaxGain(data, rows, columns):
     retidx = -1
     entropy, ans = findEntropy(data, rows)
     if entropy == 0:
-        """if ans == 1:
-            print("Yes")
-        else:
-            print("No")"""
         return maxGain, retidx, ans
 
     for jj in columns:
@@ -175,7 +168,6 @@ def findMaxGain(data, rows, columns):
                 mydict[key] = mydict[key] + 1
         gain = entropy
 
-        # print(mydict)
         for key in mydict:
             walking = 0
             falling = 0
@@ -214,7 +206,7 @@ def findMaxGain(data, rows, columns):
                     else:
                         lying += 1
 
-            # print(yes, no)
+            # Print(yes, no)
             # Sum of the total activity for the gini index consideration based on gain
             total_count += walking + falling + l_down + s_down + sitting + standing_up_from_lying + \
                            sitting_on_the_ground + standing_up_from_sitting + standing_up_from_sitting_on_ground + lying
@@ -232,9 +224,10 @@ def findMaxGain(data, rows, columns):
             j = standing_up_from_sitting_on_ground / total_count
             k = lying / total_count
 
-            # Print(x, y)
-            # Print(a,b,c,d,e,f,g,h,i,j,k,total_count)
+            # print(x, y)
+            # print(a,b,c,d,e,f,g,h,i,j,k,total_count)
             # Factor the gain value on each attribute to takes log to determine the max gain for the given set(act)
+
             factor = 0
             if a != 0:
                 if a != 0:
@@ -260,13 +253,13 @@ def findMaxGain(data, rows, columns):
             elif k != 0:
                 factor += k * math.log2(k)
 
-            # gain += (mydict[key] * (a*math.log2(a) + b*math.log2(b)+ c*math.log2(c)+ d*math.log2(d) +e*math.log2(e)+
-            # f*math.log2(f) +g*math.log2(g) +h*math.log2(h)+ i*math.log2(i)+ j*math.log2(j)+k*math.log2(k)))/(rows-1)
+            # gain += (mydict[key] * (a*math.log2(a) + b*math.log2(b)+ c*math.log2(c)+
+            # d*math.log2(d) +e*math.log2(e)+ f*math.log2(f) +g*math.log2(g) +h*math.log2(h)+ i*math.log2(i)+
+            # j*math.log2(j)+k*math.log2(k)))/(rows-1)
 
             gain += ((mydict[key] * factor) / (Rows))
 
-        # print(gain)
-        # conditionality for checking the gain if max than Maxgain the re-assigned
+        # Conditionality for checking the gain if max than Maxgain the re-assigned
         if gain > maxGain:
             maxGain = gain
             retidx = jj
@@ -282,14 +275,11 @@ def buildTree(data, rows, columns):
     maxGain, idx, ans = findMaxGain(X, rows, columns)
 
     # Making Node defining childs of root
+
     root = Node()
     root.childs = []
 
-    # print(maxGain
-    #
-    # )
-    # selecting the max gain value based on each classification decision on and value
-
+    # Selecting the max gain value based on each classification decision on ans value
     if maxGain == 0:
         if ans == 1:
             root.value = 'walking'
@@ -332,9 +322,7 @@ def buildTree(data, rows, columns):
             if data[i][idx] == key:
                 newrows.append(i)
 
-        # print(newrows)
-        # building Tree based on the decison as key parameter
-
+        # Building Tree based on the decison as key parameter
         temp = buildTree(data, newrows, newcolumns)
         temp.decision = key
         root.childs.append(temp)
@@ -348,7 +336,7 @@ def traverse(root):
 
     n = len(root.childs)
     if n > 0:
-        # each iteration w.r.t root traverse child node
+        # each iteration w.r.t root taverse child node
         for i in range(0, n):
             traverse(root.childs[i])
 
@@ -360,6 +348,3 @@ def calculate():
     root = buildTree(X, row, columns)
     root.decision = 'Start'
     traverse(root)
-
-
-calculate()
