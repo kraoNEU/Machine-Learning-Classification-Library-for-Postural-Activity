@@ -21,4 +21,6 @@ new_test_prediction = new_test_model.class_predictor(input_test)
 mclr_accurcy = new_test_model.accuracy(output_test, new_test_prediction)
 print("The percentage accuracy of the multi class logistic regression model is: ",
       mclr_accurcy)
+
+
 assert math.isclose(mclr_accurcy, 60.526315789473685)
