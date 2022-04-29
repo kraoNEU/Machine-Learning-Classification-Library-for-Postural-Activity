@@ -1,5 +1,4 @@
 import math
-
 import numpy as np
 import pandas as pd
 from Modules import Bernoulli_Naives_Classifier as BNC
