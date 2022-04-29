@@ -1,5 +1,4 @@
 import math
-
 import pandas as pd
 from sklearn import preprocessing
 from sklearn.tree import DecisionTreeClassifier
@@ -36,7 +35,7 @@ print(y_testset[0:5])
 accuracy_score = metrics.accuracy_score(y_testset, predTree)
 
 # Evaluating the Accuracy
-print("DecisionTrees's Accuracy: ", accuracy_score)
+print("Decision Tree's Accuracy: ", accuracy_score)
 
 # Testing the Decision
 assert math.isclose(accuracy_score, 0.4896680011322738)
