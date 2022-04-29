@@ -1,14 +1,12 @@
-# Import Libraries
-from functools import total_ordering
-import numpy as np
-import matplotlib.pyplot as plt
+# Importing Libraries
+
 import pandas as pd
 import math
 import copy
 
 #reading the data and printing total shape of dataset
 
-dataset = pd.read_csv("/Users/cvkrishnarao/Desktop/Intro_Programming_Assignment/5010_Project/Dataset/posturalDatset.csv")
+dataset = pd.read_csv("../Dataset/posturalDatset.csv")
 X = dataset.iloc[:, 1:].values
 Rows=dataset.shape[0]
 
