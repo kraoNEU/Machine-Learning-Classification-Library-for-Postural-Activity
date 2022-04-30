@@ -120,7 +120,8 @@ class GaussianNB:
         Formula and Basic Understanding have been inspired from the citation given above.
         """
 
-        results = []
+        # Initialise the result list for the output
+        result_output_lst = []
         input_Dataset = np.array(input_Dataset)
 
         # Iterating thru the Input features of X
@@ -138,6 +139,7 @@ class GaussianNB:
 
                 # Getting the Mean and Variance for the particular feature feature_outcome
                 for dataset_features, dataset_feature_values in zip(self.dataSet_features, input_Data_Features):
+
                     # Calculating the Mean of the Input Features
                     calculate_Mean_feature = self.likelihoods_lst[dataset_features][feature_outcomes]['mean']
 
@@ -158,12 +160,12 @@ class GaussianNB:
             # Getting the final result of the Probability Outcome
             result = max(probability_Outcome_Dict, key=lambda x: probability_Outcome_Dict[x])
 
-            # Append the results in the list
-            # Appending the results into the List
-            results.append(result)
+            # Append the result_output_lst in the list
+            # Appending the result_output_lst into the List
+            result_output_lst.append(result)
 
-        # Returns the np.array of the results
-        return np.array(results)
+        # Returns the np.array of the result_output_lst
+        return np.array(result_output_lst)
 
 
 class MultiClassBernoulliClassification:
