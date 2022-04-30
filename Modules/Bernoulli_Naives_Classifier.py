@@ -37,10 +37,10 @@ class GaussianNB:
         function: Static Method for Getting the Target Classes and Input Features
         returns: Dataframe of Input Variables and Series of Target Classes
         """
-        X = dataFrame.drop([dataFrame.columns[-1]], axis=1)
-        y = dataFrame[dataFrame.columns[-1]]
+        X_Data = dataFrame.drop([dataFrame.columns[-1]], axis=1)
+        y_data = dataFrame[dataFrame.columns[-1]]
 
-        return X, y
+        return X_Data, y_data
 
     @staticmethod
     def train_test_split(x, y, test_train_split=0.25, random_state=None):
@@ -57,16 +57,16 @@ class GaussianNB:
 
         return x_train, x_test, y_train, y_test
 
-    def fit(self, X, y):
+    def fit(self, X_Data, y_target_Data):
         """
         function: Tries to fit the Features with the outcome classes of the Training Dataset
         returns: class posterior calculation and likelihood of the classes
         """
-        self.dataSet_features = list(X.columns)
-        self.X_train = X
-        self.y_train = y
-        self.train_size = X.shape[0]
-        self.num_feats = X.shape[1]
+        self.dataSet_features = list(X_Data.columns)
+        self.X_train = X_Data
+        self.y_train = y_target_Data
+        self.train_size = X_Data.shape[0]
+        self.num_feats = X_Data.shape[1]
 
         # Iterates over the features of the dataset
         for feature in self.dataSet_features:
