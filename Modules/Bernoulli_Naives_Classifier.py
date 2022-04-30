@@ -103,7 +103,6 @@ class GaussianNB:
         for feature in self.dataSet_features:
 
             for outcome in np.unique(self.y_train):
-
                 # Getting the likelihoods of input variable "Mean"
                 self.likelihoods_lst[feature][outcome]['mean'] = self.X_train[feature][
                     self.y_train[self.y_train == outcome].index.values.tolist()].mean()
@@ -139,7 +138,6 @@ class GaussianNB:
 
                 # Getting the Mean and Variance for the particular feature feature_outcome
                 for dataset_features, dataset_feature_values in zip(self.dataSet_features, input_Data_Features):
-                    
                     # Calculating the Mean of the Input Features
                     calculate_Mean_feature = self.likelihoods_lst[dataset_features][feature_outcomes]['mean']
 
@@ -148,8 +146,8 @@ class GaussianNB:
 
                     # Getting the Feature Input Likelihood
                     feature_Likelihood *= (1 / math.sqrt(2 * math.pi * calculate_variance_feature)) \
-                                  * np.exp(-(dataset_feature_values - calculate_Mean_feature) ** 2 /
-                                           (2 * calculate_variance_feature))
+                                          * np.exp(-(dataset_feature_values - calculate_Mean_feature) ** 2 /
+                                                   (2 * calculate_variance_feature))
 
                 # Calculating the Posterior Numerator
                 posterior_numerator = (feature_Likelihood * prior)
@@ -169,38 +167,85 @@ class GaussianNB:
 
 
 class MultiClassBernoulliClassification:
+    """
+    Function: Calculates the Multi-Gaussian Naives Bayes Classifier for the Input Dataset
+    Static Methods: 2 Methods for train_model, class_predictor
+    Input: Any Binary dataset with independent dataset (preferably)
+    """
 
     def __init__(self):
         self.class_model_dict = {}
 
-    def train_model(self, input_data, output_data):
-        target_class_list = list(set(output_data))
-        for each_class in target_class_list:
-            new_output_data = []
-            for each_output_sample in output_data:
+    def train_model(self, input_data_set, output_Prediction_Data):
+
+        """
+        function: calculates the one Vs rest methodology for Multi-Classification
+        returns: list of the likelihood based on the mean and variance
+        """
+
+        target_feature_class = list(set(output_Prediction_Data))
+
+        # Iterating thru the Target Feature Class
+        for each_class in target_feature_class:
+
+            new_output_class_List = []
+
+            # Iterating thru the Prediction Data
+            for each_output_sample in output_Prediction_Data:
+
+                # Marking the Target Class as 1 and Rest as 0 in else
                 if each_class == each_output_sample:
-                    new_output_data.append(1)
+                    new_output_class_List.append(1)
+
+                # Marking the other classes as 0
                 else:
-                    new_output_data.append(0)
+                    new_output_class_List.append(0)
+
+            # Calling the GaussianNB for the 1 and 0 class
             this_model = GaussianNB()
-            this_model.fit(input_data, new_output_data)
+
+            # Inputting the Dataset
+            this_model.fit(input_data_set, new_output_class_List)
+
+            # Storing the Model data in a list
             self.class_model_dict[each_class] = this_model
 
-    def class_predictor(self, input_data_new):
+    def class_predictor(self, input_data_Class):
+
+        """
+        function: calculates the maximum possible likelihood of the features
+        returns: list of the likelihood based on the mean and variance
+        """
+
+        # initialise the Dictionaries Keys
         all_classes = self.class_model_dict.keys()
+
+        # Predicted Class List
         predicted_class_list = []
 
-        for each_example in input_data_new:
+        # Iterating thru the Various Target Class
+        for each_target_Class in input_data_Class:
+
+            # Calculating the Posterior Probability for each
             probability_dict = {}
+
+            # Iterating thru all the Target Classes
             for each in all_classes:
+
+                # Getting the Values of each classes
                 model = self.class_model_dict[each]
-                n = tuple(model.predictor_trainer(input_data_new))
+
+                # Getting the predictor of the each class
+                n = tuple(model.predictor_trainer(input_data_Class))
+
+                # Getting value of each of the values
                 probability_dict[n] = each
+
+            # getting the max value of the dictionry keys to get the probability
             predicted_class = probability_dict.get(max(probability_dict.keys()))
+
+            # Gettingg all the predicted Class
             predicted_class_list.append(predicted_class)
 
+        # Getting all the list of the generated class
         return predicted_class_list
-
-    def accuracy(self, outputClass, predictedClass):
-        percent_accuracy: int = np.sum(outputClass == predictedClass) / len(outputClass) * 100
-        return percent_accuracy
