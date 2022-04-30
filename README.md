@@ -10,7 +10,7 @@ Venkata Krishna Rao Chelamkuri,chelamkuri.v@northeastern.edu
 
 **Github repository:**
 
-https://github.com/kraoNEU/Machine-Learning-Classification-Libraries-for-Postural-Activity
+https://github.com/kraoNEU/Machine-Learning-Classification-Library-for-Postural-Activity
 
 **Summary:**
 
