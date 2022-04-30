@@ -13,8 +13,8 @@ class GaussianNB:
     def __init__(self):
         """Initializing the Variables"""
 
-        self.features = list
-        self.likelihoods = {}
+        self.dataSet_features = list
+        self.likelihoods_lst = {}
         self.class_priors = {}
 
         self.X_train = np.array
@@ -31,14 +31,14 @@ class GaussianNB:
         return round(float(sum(y_pred == y_true)) / float(len(y_true)) * 100, 2)
 
     @staticmethod
-    def pre_processing(df):
+    def pre_processing(dataFrame):
 
         """
         function: Static Method for Getting the Target Classes and Input Features
         returns: Dataframe of Input Variables and Series of Target Classes
         """
-        X = df.drop([df.columns[-1]], axis=1)
-        y = df[df.columns[-1]]
+        X = dataFrame.drop([dataFrame.columns[-1]], axis=1)
+        y = dataFrame[dataFrame.columns[-1]]
 
         return X, y
 
@@ -62,29 +62,29 @@ class GaussianNB:
         function: Tries to fit the Features with the outcome classes of the Training Dataset
         returns: class posterior calculation and likelihood of the classes
         """
-        self.features = list(X.columns)
+        self.dataSet_features = list(X.columns)
         self.X_train = X
         self.y_train = y
         self.train_size = X.shape[0]
         self.num_feats = X.shape[1]
 
         # Iterates over the features of the dataset
-        for feature in self.features:
+        for feature in self.dataSet_features:
 
             # Defining a likelihood dictionary for further use for getting the mean and variance based on the
             # Input feature
-            self.likelihoods[feature] = {}
+            self.likelihoods_lst[feature] = {}
 
             # Adding the features to the likelihood and class priors dictionaries to add the mean and variance later
             for outcome in np.unique(self.y_train):
-                self.likelihoods[feature].update({outcome: {}})
+                self.likelihoods_lst[feature].update({outcome: {}})
                 self.class_priors.update({outcome: 0})
 
         # Call the Method for Posterior Calculation and Likelihood Calculation
-        self._calc_class_prior()
-        self._calc_likelihoods()
+        self.calculation_Posterior()
+        self.calculation_Likelihood()
 
-    def _calc_class_prior(self):
+    def calculation_Posterior(self):
 
         """
         function: calculates the posterior probability
@@ -95,24 +95,24 @@ class GaussianNB:
             outcome_count = sum(self.y_train == outcome)
             self.class_priors[outcome] = outcome_count / self.train_size
 
-    def _calc_likelihoods(self):
+    def calculation_Likelihood(self):
         """
         function: calculates the maximum possible likelihood of the features
         returns: list of the likelihood based on the mean and variance
         """
-        for feature in self.features:
+        for feature in self.dataSet_features:
 
             for outcome in np.unique(self.y_train):
 
                 # Getting the likelihoods of input variable "Mean"
-                self.likelihoods[feature][outcome]['mean'] = self.X_train[feature][
+                self.likelihoods_lst[feature][outcome]['mean'] = self.X_train[feature][
                     self.y_train[self.y_train == outcome].index.values.tolist()].mean()
 
                 # Getting the likelihoods of input variable "Variance"
-                self.likelihoods[feature][outcome]['variance'] = self.X_train[feature][
+                self.likelihoods_lst[feature][outcome]['variance'] = self.X_train[feature][
                     self.y_train[self.y_train == outcome].index.values.tolist()].var()
 
-    def predict(self, X):
+    def predict(self, input_Dataset):
 
         """
         Function: Predicts Whether the Input Features are for a particular class (target Classes) using Likelihood.
@@ -122,34 +122,49 @@ class GaussianNB:
         """
 
         results = []
-        X = np.array(X)
+        input_Dataset = np.array(input_Dataset)
 
         # Iterating thru the Input features of X
-        for query in X:
+        for input_Data_Features in input_Dataset:
 
             # Storing the Posterior Outcome
-            probs_outcome = {}
+            probability_Outcome_Dict = {}
 
-            for outcome in np.unique(self.y_train):
-                prior = self.class_priors[outcome]
-                likelihood = 1
+            # Iterating thru the y_train
+            for feature_outcomes in np.unique(self.y_train):
+                prior = self.class_priors[feature_outcomes]
+
+                # Setting the Input Feature Likelihood as 1 to change later
+                feature_Likelihood = 1
 
                 # Getting the Mean and Variance for the particular feature feature_outcome
-                for feat, feat_val in zip(self.features, query):
-                    mean = self.likelihoods[feat][outcome]['mean']
-                    var = self.likelihoods[feat][outcome]['variance']
-                    likelihood *= (1 / math.sqrt(2 * math.pi * var)) * np.exp(-(feat_val - mean) ** 2 / (2 * var))
+                for dataset_features, dataset_feature_values in zip(self.dataSet_features, input_Data_Features):
+                    
+                    # Calculating the Mean of the Input Features
+                    calculate_Mean_feature = self.likelihoods_lst[dataset_features][feature_outcomes]['mean']
 
-                posterior_numerator = (likelihood * prior)
-                probs_outcome[outcome] = posterior_numerator
+                    # Calculating the Variance of the Input Features
+                    calculate_variance_feature = self.likelihoods_lst[dataset_features][feature_outcomes]['variance']
+
+                    # Getting the Feature Input Likelihood
+                    feature_Likelihood *= (1 / math.sqrt(2 * math.pi * calculate_variance_feature)) \
+                                  * np.exp(-(dataset_feature_values - calculate_Mean_feature) ** 2 /
+                                           (2 * calculate_variance_feature))
+
+                # Calculating the Posterior Numerator
+                posterior_numerator = (feature_Likelihood * prior)
+
+                # Storing the Dict value of the Mean and the Variance of the Input Feature
+                probability_Outcome_Dict[feature_outcomes] = posterior_numerator
 
             # Getting the final result of the Probability Outcome
-            result = max(probs_outcome, key=lambda x: probs_outcome[x])
+            result = max(probability_Outcome_Dict, key=lambda x: probability_Outcome_Dict[x])
 
             # Append the results in the list
             # Appending the results into the List
             results.append(result)
 
+        # Returns the np.array of the results
         return np.array(results)
 
 
