@@ -1,6 +1,6 @@
-```
-Machine Learning Classification Libraries for Postural Activity
-```
+
+## Machine Learning Classification Libraries for Postural Activity
+
 **Authors:**
 
 Albert Patrick Sankoh,sankoh.a@northeastern.edu
